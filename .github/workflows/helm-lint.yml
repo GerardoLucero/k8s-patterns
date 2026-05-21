@@ -1,0 +1,36 @@
+name: Helm Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'helm/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+
+      - name: Lint all charts
+        run: |
+          for chart in helm/*/; do
+            echo "Linting $chart..."
+            helm lint "$chart"
+            helm lint "$chart" -f "$chart/values-dev.yaml"
+            helm lint "$chart" -f "$chart/values-prod.yaml"
+          done
+
+      - name: Template validation
+        run: |
+          for chart in helm/*/; do
+            echo "Validating templates for $chart..."
+            helm template test "$chart" -f "$chart/values-dev.yaml" > /dev/null
+            helm template test "$chart" -f "$chart/values-prod.yaml" > /dev/null
+          done
