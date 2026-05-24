@@ -2,6 +2,10 @@
 
 Production-ready Kubernetes patterns for platform engineers. Covers multi-environment Helm charts, RBAC, ingress, resource management, and observability — patterns I use daily operating a self-hosted K8s cluster running AI workloads.
 
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/gerardolucero)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/lucerorios0)
+[![GitHub Stars](https://img.shields.io/github/stars/GerardoLucero/k8s-patterns?style=social)](https://github.com/GerardoLucero/k8s-patterns)
+
 ## What's Covered
 
 | Pattern | Description | Status |
