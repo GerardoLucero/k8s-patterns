@@ -1,0 +1,22 @@
+# Talos machineconfig patch — exposes control-plane metrics to Prometheus.
+# See ./README.md for the full problem statement and apply/verify steps.
+#
+# Apply to ONE control-plane node at a time with:
+#   talosctl patch machineconfig --patch @talos-controlplane-metrics-patch.yaml \
+#     -e <control-plane-ip> -n <control-plane-ip> --talosconfig=<path>
+#
+# scheduler/controller-manager take effect immediately (static pod recreated).
+# etcd requires a full node reboot — `service etcd` doesn't support a hot
+# restart via the Talos API. Confirm etcd quorum before rebooting each node,
+# and confirm it's restored before moving to the next one.
+
+cluster:
+  controllerManager:
+    extraArgs:
+      bind-address: 0.0.0.0
+  scheduler:
+    extraArgs:
+      bind-address: 0.0.0.0
+  etcd:
+    extraArgs:
+      listen-metrics-urls: http://0.0.0.0:2381
