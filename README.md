@@ -15,7 +15,7 @@ Production-ready Kubernetes patterns for platform engineers. Covers multi-enviro
 | [Ingress + TLS](./ingress/) | Traefik + cert-manager + Let's Encrypt | ✅ |
 | [Resource Management](./resources/) | Requests, limits, VPA, PodDisruptionBudgets | 🔄 |
 | [Persistent Volumes](./storage/) | PVC patterns for stateful workloads | 🔄 |
-| [Observability Stack](./observability/) | kube-prometheus-stack + Grafana dashboards | 🔄 |
+| [Observability Stack](./observability/) | kube-prometheus-stack, plus the Talos control-plane metrics gap most setups miss | ✅ |
 | [Agent Workloads](./agents/) | Running AI agents as K8s Jobs + KEDA autoscaling | 🔄 |
 
 ## Why These Patterns
@@ -153,6 +153,8 @@ Everything uses kube-prometheus-stack. Custom dashboards track:
 kubectl port-forward svc/kube-prometheus-stack-grafana 3000:80 -n monitoring
 # Default: admin / prom-operator
 ```
+
+**Common gap:** `kube-prometheus-stack`'s dashboards for etcd, scheduler, controller-manager, and kube-proxy ship empty on Talos Linux by default — those components bind to loopback and Prometheus can't reach them, silently, with no error. See [`observability/`](./observability/) for the fix and why it matters more than it looks.
 
 ## Architecture Decisions
 
