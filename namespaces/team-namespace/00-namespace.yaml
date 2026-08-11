@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-example
+  labels:
+    team: example
+    # Used by the NetworkPolicy below to scope traffic by team label
+    # rather than by namespace name — keeps the policy stable if the
+    # namespace is ever renamed.
+    network-policy: team-isolated
