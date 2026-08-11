@@ -2,7 +2,7 @@ name: Helm Lint
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
     paths:
       - 'helm/**'
