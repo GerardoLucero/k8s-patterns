@@ -11,8 +11,8 @@ Production-ready Kubernetes patterns for platform engineers. Covers multi-enviro
 | Pattern | Description | Status |
 |---|---|---|
 | [Multi-env Helm Charts](./helm/) | Dev / Staging / Prod with environment-specific values | ✅ |
-| [Namespace Isolation](./namespaces/) | RBAC + NetworkPolicy per team | ✅ |
-| [Ingress + TLS](./ingress/) | Traefik + cert-manager + Let's Encrypt | ✅ |
+| [Namespace Isolation](./namespaces/) | RBAC + NetworkPolicy per team, default-deny first | ✅ |
+| [Ingress + TLS](./ingress/) | Cloudflare Tunnel + Traefik, no cloud load balancer | ✅ |
 | [Resource Management](./resources/) | Requests, limits, VPA, PodDisruptionBudgets | 🔄 |
 | [Persistent Volumes](./storage/) | PVC patterns for stateful workloads | 🔄 |
 | [Observability Stack](./observability/) | kube-prometheus-stack, plus the Talos control-plane metrics gap most setups miss | ✅ |
@@ -20,7 +20,7 @@ Production-ready Kubernetes patterns for platform engineers. Covers multi-enviro
 
 ## Why These Patterns
 
-I operate a 3-node k3s cluster at home (AMD Ryzen 5, 16GB RAM per node) hosting AI agent workloads. These are the patterns that work in a real environment — not just on managed cloud K8s.
+I operate a 6-node Talos Linux cluster at home (3 control-plane, 3 workers, 16GB RAM per node) hosting AI agent workloads. These are the patterns that work in a real environment — not just on managed cloud K8s.
 
 Real constraints I solve for:
 - No cloud load balancer → Traefik Ingress + Cloudflare Tunnel
@@ -31,10 +31,10 @@ Real constraints I solve for:
 ## Stack
 
 ```
-Cluster: k3s (lightweight K8s)
-Ingress: Traefik (built-in with k3s)
-TLS: cert-manager + Let's Encrypt
-Networking: Flannel CNI + Cloudflare Tunnel
+Cluster: Talos Linux (immutable, API-driven, no SSH)
+Ingress: Traefik + Cloudflare Tunnel (no cloud load balancer, no open inbound ports)
+TLS: cert-manager + Let's Encrypt (DNS-01 challenge)
+Networking: Flannel CNI
 Storage: Local-path-provisioner
 Monitoring: kube-prometheus-stack (Prometheus + Grafana + Alertmanager)
 Autoscaling: KEDA for event-driven workloads
@@ -158,8 +158,8 @@ kubectl port-forward svc/kube-prometheus-stack-grafana 3000:80 -n monitoring
 
 ## Architecture Decisions
 
-**Why k3s over kubeadm?**  
-Single binary, automatic TLS, built-in Traefik and CoreDNS. On home lab hardware with no dedicated ops time, simplicity wins over control.
+**Why Talos over a standard Linux distro + kubeadm?**  
+No SSH, no shell to drift — the entire node is configured declaratively via a single YAML machine config, applied through an API. On home-lab hardware managed solo, the appeal isn't "less to configure," it's that configuration drift between nodes becomes structurally hard to introduce, because there's no shell to make an untracked change from in the first place.
 
 **Why not managed K8s (EKS/GKE)?**  
 Cost and learning. Running your own cluster forces you to understand networking, storage, and failure modes that managed K8s abstracts away. If you're interviewing for Platform Engineer roles, this is the difference between knowing K8s and understanding K8s.

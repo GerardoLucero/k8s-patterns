@@ -1,0 +1,35 @@
+# Scopes a team to their own namespace: full control over workloads,
+# read-only on the namespace's own secrets and configmaps, and nothing
+# outside team-example — no cluster-wide verbs, no other namespaces.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: team-example-deployer
+  namespace: team-example
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: team-namespace-admin
+  namespace: team-example
+rules:
+  - apiGroups: ["apps", ""]
+    resources: ["deployments", "services", "pods", "pods/log"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: team-example-deployer-binding
+  namespace: team-example
+subjects:
+  - kind: ServiceAccount
+    name: team-example-deployer
+    namespace: team-example
+roleRef:
+  kind: Role
+  name: team-namespace-admin
+  apiGroup: rbac.authorization.k8s.io

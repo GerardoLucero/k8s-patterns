@@ -1,0 +1,21 @@
+# Maps public hostnames to internal Services. cloudflared reads this at
+# startup and routes each hostname to the corresponding ClusterIP Service —
+# Traefik (or whatever's fronting your Services) never needs to be exposed
+# directly; cloudflared → Service is the only hop.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: ingress
+data:
+  config.yaml: |
+    tunnel: <tunnel-id>
+    credentials-file: /etc/cloudflared/creds/credentials.json
+
+    ingress:
+      - hostname: app.example.com
+        service: http://traefik.ingress.svc.cluster.local:80
+      - hostname: grafana.example.com
+        service: http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80
+      # Catch-all — required as the last rule, or cloudflared refuses to start
+      - service: http_status:404

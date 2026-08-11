@@ -1,0 +1,51 @@
+# Runs a Cloudflare Tunnel as a Pod inside the cluster — no LoadBalancer
+# type, no hostPort, no router port-forwarding. The tunnel dials out to
+# Cloudflare's edge; nothing needs to be reachable from the internet
+# inbound, which matters on a home connection with a dynamic IP and no
+# static WAN address to point DNS at.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared
+  namespace: ingress
+spec:
+  replicas: 2 # 2+ for tunnel HA — Cloudflare load-balances across connected replicas
+  selector:
+    matchLabels:
+      app: cloudflared
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:latest
+          args:
+            - tunnel
+            - --config
+            - /etc/cloudflared/config.yaml
+            - run
+          volumeMounts:
+            - name: config
+              mountPath: /etc/cloudflared
+              readOnly: true
+            - name: creds
+              mountPath: /etc/cloudflared/creds
+              readOnly: true
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      volumes:
+        - name: config
+          configMap:
+            name: cloudflared-config
+        - name: creds
+          secret:
+            # Tunnel credentials — created once via `cloudflared tunnel create`,
+            # stored as a Secret, never checked into git.
+            secretName: cloudflared-tunnel-creds
