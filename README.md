@@ -2,9 +2,8 @@
 
 Production-ready Kubernetes patterns for platform engineers. Covers multi-environment Helm charts, RBAC, ingress, resource management, and observability — patterns I use daily operating a self-hosted K8s cluster running AI workloads.
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/gerardolucero)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/lucerorios0)
-[![GitHub Stars](https://img.shields.io/github/stars/GerardoLucero/k8s-patterns?style=social)](https://github.com/GerardoLucero/k8s-patterns)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/GerardoLucero/k8s-patterns/actions/workflows/helm-lint.yml/badge.svg)](https://github.com/GerardoLucero/k8s-patterns/actions/workflows/helm-lint.yml)
 
 ## What's Covered
 
@@ -171,6 +170,13 @@ HPA scales Deployments based on CPU/memory. KEDA scales Jobs based on external t
 
 See [SETUP.md](./SETUP.md) for step-by-step cluster setup on bare-metal / mini PCs.
 
+## Support
+
+Open source, maintained in my spare time. If it was useful and you want to say thanks:
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/gerardolucero)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/lucerorios0)
+
 ## License
 
-MIT
+MIT, see [LICENSE](LICENSE).
